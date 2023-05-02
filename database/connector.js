@@ -15,8 +15,9 @@ class Connector {
         this.mongoConnection = mongoose.connect(this.database_url, {
           useNewUrlParser: true,
           useUnifiedTopology: true,
-          useFindAndModify: true,
+
           useCreateIndex: true,
+          useFindAndModify: false,
         });
         resolve(true);
       } catch (err) {
