@@ -5,6 +5,11 @@ import notFound from "./app/middleware/not-found.js";
 import errorHandlerMiddleware from "./app/middleware/error-handler.js";
 import expressAsycErrors from "express-async-errors";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 class App {
   constructor() {
     dotenv.config();
@@ -16,7 +21,16 @@ class App {
   }
 
   middlewares() {
-    this.server.use(express.static("public"));
+    this.server.use(express.static("react-jobs-app/build"));
+    this.server.use((req, res, next) => {
+      if (!req.url.startsWith("/api")) {
+        res.sendFile(
+          path.join(__dirname, "react-jobs-app/build", "index.html")
+        );
+      } else {
+        next();
+      }
+    });
     this.server.use(express.json());
   }
 
