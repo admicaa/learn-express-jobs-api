@@ -26,8 +26,13 @@ class App {
   }
 
   middlewares() {
-    this.server.use(helmet());
+    this.server.use(
+      helmet({
+        contentSecurityPolicy: false,
+      })
+    );
     this.server.use(cors());
+
     this.server.use(xss());
     this.server.use(
       RateLimit({
@@ -37,6 +42,7 @@ class App {
     );
 
     this.server.use(express.static("react-jobs-app/build"));
+
     this.server.use((req, res, next) => {
       if (!req.url.startsWith("/api")) {
         res.sendFile(
