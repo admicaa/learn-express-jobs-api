@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import usersModel from "../models/users.model.js";
 import sessionsModel from "../models/sessions.model.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+
 class AuthController {
   constructor() {
     this.register = this.register.bind(this);
@@ -69,24 +69,7 @@ class AuthController {
       password: hashedPassword,
     });
 
-    const token = jwt.sign(
-      {
-        email: user.email,
-        _id: user._id,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "30d",
-      }
-    );
-    var tokenExpires = new Date();
-    tokenExpires = tokenExpires.setDate(tokenExpires.getDate() + 30);
-
-    await sessionsModel.create({
-      jwt: token,
-      user_id: user._id,
-      expires: tokenExpires,
-    });
+    const token = await user.createJWT();
 
     res.send({
       user,
@@ -132,25 +115,9 @@ class AuthController {
     var user = await usersModel.findOne({ email: req.body.email });
 
     var result = await this.comparePassword(req.body.password, user.password);
-    if (result) {
-      const token = jwt.sign(
-        {
-          email: user.email,
-          _id: user._id,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "30d",
-        }
-      );
-      var tokenExpires = new Date();
-      tokenExpires = tokenExpires.setDate(tokenExpires.getDate() + 30);
 
-      await sessionsModel.create({
-        jwt: token,
-        user_id: user._id,
-        expires: tokenExpires,
-      });
+    if (result) {
+      var token = await user.createJWT();
 
       res.json({
         user: {
