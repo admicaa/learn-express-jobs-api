@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = new Router();
 
-var routes = [];
+var routes = ["auth"];
 
 routes.forEach(async (route) => {
   const r = await import(`./${route}.routes.js`);

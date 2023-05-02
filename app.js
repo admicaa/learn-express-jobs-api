@@ -4,8 +4,10 @@ import RouteServiceProvider from "./app/providers/RouteServiceProvider.js";
 import notFound from "./app/middleware/not-found.js";
 import errorHandlerMiddleware from "./app/middleware/error-handler.js";
 import expressAsycErrors from "express-async-errors";
+import expressValidator from "express-validator";
 import dotenv from "dotenv";
 import path from "path";
+
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,6 +34,7 @@ class App {
       }
     });
     this.server.use(express.json());
+    // this.server.use(expressValidator());
   }
 
   routes() {
