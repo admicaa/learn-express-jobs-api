@@ -7,7 +7,10 @@ import expressAsycErrors from "express-async-errors";
 import expressValidator from "express-validator";
 import dotenv from "dotenv";
 import path from "path";
-
+import helmet from "helmet";
+import cors from "cors";
+import xss from "xss-clean";
+import RateLimit from "express-rate-limit";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,6 +26,16 @@ class App {
   }
 
   middlewares() {
+    this.server.use(helmet());
+    this.server.use(cors());
+    this.server.use(xss());
+    this.server.use(
+      RateLimit({
+        windowMs: 60 * 1000,
+        max: 100,
+      })
+    );
+
     this.server.use(express.static("react-jobs-app/build"));
     this.server.use((req, res, next) => {
       if (!req.url.startsWith("/api")) {
